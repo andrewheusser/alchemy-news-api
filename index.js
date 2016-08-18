@@ -1,6 +1,6 @@
 /**
 * alchemy-news-api - A node module for calling the AlchemyData News API
-* See http://docs.alchemyapi.com/docs/introduction/ for details about 
+* See http://docs.alchemyapi.com/docs/introduction/ for details about
 * the API requests and responses.
 * Copyright (c) 2015 David Adamo Jr.
 * MIT License
@@ -40,7 +40,7 @@ var AlchemyNewsAPI = function (api_key, opts) {
 };
 
 /**
-* Generates the URL object to be passed to the HTTP request for a specific 
+* Generates the URL object to be passed to the HTTP request for a specific
 * API method call
 * @param {Object} query The query object
 * @return {Object} The URL object for this request
@@ -66,11 +66,11 @@ AlchemyNewsAPI.prototype._getQuery = function (opts) {
 
     // if statements for each type of query
     // determine type of query by checking if the opts object has certain properties e.g. relation, label, etc.
-    
+
     var options = {};
 
     // handle query parameters
-    
+
     if (opts.hasOwnProperty('taxonomy_label')) {
         options["q.enriched.url.enrichedTitle.taxonomy.taxonomy_.label"] = opts["taxonomy_label"];
     }
@@ -90,12 +90,12 @@ AlchemyNewsAPI.prototype._getQuery = function (opts) {
 
     if (opts.hasOwnProperty('relation')) {
         var relation = opts.relation;
-        var relationStr = "|subject.entities.entity.type=" + relation.subject_type + ", acton.verb.text=" + relation.action 
+        var relationStr = "|subject.entities.entity.type=" + relation.subject_type + ", acton.verb.text=" + relation.action
                    + ", object.entities.entity.type=" + relation.object_type + "|";
         options['q.enriched.url.enrichedTitle.relations.relation'] = relationStr;
     }
 
-    if (opts.hasOwnProperty('title')) { 
+    if (opts.hasOwnProperty('title')) {
         options['q.enriched.url.title'] = opts['title'];
         if (opts.hasOwnProperty('sentiment_type') && opts.hasOwnProperty('sentiment_score')) {
             options['q.enriched.url.enrichedTitle.docSentiment.type'] = opts['sentiment_type'];
@@ -110,6 +110,10 @@ AlchemyNewsAPI.prototype._getQuery = function (opts) {
             return_query = "enriched.url.title";
         } else if (element == 'url') {
             return_query = "enriched.url.url";
+        } else if (element == 'sentiment_score') {
+            return_query = "enriched.url.docSentiment.score";
+          } else if (element == 'sentiment_type') {
+              return_query = "enriched.url.docSentiment.type";
         }
 
         return return_query;
@@ -150,7 +154,7 @@ AlchemyNewsAPI.prototype._getQuery = function (opts) {
     // console.log(query.nice);
     query.nice.method = httpMethod;
 
-    return query; 
+    return query;
 };
 
 /**
@@ -162,7 +166,7 @@ AlchemyNewsAPI.prototype._getQuery = function (opts) {
 AlchemyNewsAPI.prototype._doRequest = function (request_query, cb) {
     // Pass the requested URl as an object to the get request
     var http_protocol = (request_query.nice.protocol === 'https:') ? https : http;
-    
+
     var req = http_protocol.request(request_query.nice, function (res) {
         var data = [];
         res
@@ -174,14 +178,14 @@ AlchemyNewsAPI.prototype._doRequest = function (request_query, cb) {
              try {
                  result = JSON.parse(urldata);
              } catch (exp) {
-                 result = {'status_code': 500, 'status_text': 'JSON Parse Failed'};    
+                 result = {'status_code': 500, 'status_text': 'JSON Parse Failed'};
              }
 
              cb(null, result);
          })
          .on('error', function (err) {
              cb(new Error ("response.error: " + err), null);
-         });  
+         });
     });
 
     req.on("error", function (err) {
@@ -213,7 +217,7 @@ AlchemyNewsAPI.prototype._isOptionsValid = function (options) {
         return false;
     }
 
-    if (options.hasOwnProperty('taxonomy_label') || options.hasOwnProperty('concept_text') || options.hasOwnProperty('keyword_text') 
+    if (options.hasOwnProperty('taxonomy_label') || options.hasOwnProperty('concept_text') || options.hasOwnProperty('keyword_text')
     || options.hasOwnProperty('relation')) {
         return true;
     } else if (options.hasOwnProperty('entity_text') && options.hasOwnProperty('entity_type')) {
@@ -248,8 +252,8 @@ AlchemyNewsAPI.prototype.apiKeyInfo = function (options, cb) {
 
 /**
 * Function to search news by topic e.g. baseball, mobile phones, etc.
-* @param {Object} options Options to be passed to AlchemyAPI (start, end, outputMode, count, 
-* taxonomy_label, return_fields) 
+* @param {Object} options Options to be passed to AlchemyAPI (start, end, outputMode, count,
+* taxonomy_label, return_fields)
 * @param cb callback function
 */
 AlchemyNewsAPI.prototype.getNewsByTaxonomy = function (options, cb) {
@@ -324,7 +328,7 @@ AlchemyNewsAPI.prototype.getNewsByRelation = function (options, cb) {
 };
 
 /**
-* Function to search news articles based on sentiment 
+* Function to search news articles based on sentiment
 * @param {Object} options Options to be passed to alchemyAPI
 * @param cb callback function
 */
